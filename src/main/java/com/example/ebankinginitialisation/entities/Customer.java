@@ -1,5 +1,6 @@
 package com.example.ebankinginitialisation.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,5 +16,6 @@ public class Customer {
     private String name;
     private String email;
     @OneToMany (mappedBy = "customer")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // je lui dire quand il arrive là tu ignore(c'est pas la peine de réaliser cette attribut
     private List<BankAccount> bankAccounts;
 }
