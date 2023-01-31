@@ -1,8 +1,7 @@
 package com.example.ebankinginitialisation.web;
 
-import com.example.ebankinginitialisation.dtos.AccountHistoryDTO;
-import com.example.ebankinginitialisation.dtos.AccountOperationDTO;
-import com.example.ebankinginitialisation.dtos.BankAccountDTO;
+import com.example.ebankinginitialisation.dtos.*;
+import com.example.ebankinginitialisation.exceptions.BalanceNotSufficientException;
 import com.example.ebankinginitialisation.exceptions.BankAccountNotFoundException;
 import com.example.ebankinginitialisation.services.BankAccountService;
 import com.mysql.management.util.Str;
@@ -37,5 +36,22 @@ public class BankAccountRestAPI {
                                         @RequestParam(name = "page", defaultValue = "0") int page,
                                         @RequestParam(name = "size", defaultValue = "5") int size) throws BankAccountNotFoundException {
         return bankAccountService.getAccountHistory(accountId,page,size);
+    }
+    @PostMapping("/accounts/debit")
+    public DebitDTO debit (@RequestBody DebitDTO debitDTO) throws BankAccountNotFoundException, BalanceNotSufficientException {
+        this.bankAccountService.debit(debitDTO.getAccountId(),debitDTO.getAmount(), debitDTO.getDescription());
+        return debitDTO;
+    }
+    @PostMapping("/accounts/credit")
+    public CreditDTO credit (@RequestBody CreditDTO creditDTO) throws BankAccountNotFoundException {
+        this.bankAccountService.credit(creditDTO.getAccountId(),creditDTO.getAmount(), creditDTO.getDescription());
+        return creditDTO;
+    }
+    @PostMapping("/accounts/transfer")
+    public void transfer (@RequestBody TransferRequestDTO transferRequestDTO) throws BankAccountNotFoundException, BalanceNotSufficientException {
+        this.bankAccountService.transfer(
+                transferRequestDTO.getAccountSource(),
+                transferRequestDTO.getAccountDestination(),
+                transferRequestDTO.getAmount());
     }
 }
